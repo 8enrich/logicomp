@@ -84,7 +84,8 @@ def number_of_connectives(formula: Formula):
     if isinstance(formula, Atom):
         return 0
     if isinstance(formula, Not):
-        return 1
+        num_of_conn = number_of_connectives(formula.inner)
+        return num_of_conn + 1
     if isinstance(formula, Implies) or isinstance(formula, And) or isinstance(formula, Or):
         num_of_conn1 = number_of_connectives(formula.left)
         num_of_conn2 = number_of_connectives(formula.right)
@@ -92,8 +93,12 @@ def number_of_connectives(formula: Formula):
 
 def is_literal(formula: Formula):
     """Returns True if formula is a literal. It returns False, otherwise"""
-    return isinstance(formula, Atom) or isinstance(formula, Not)
-
+    if isinstance(formula, Atom):
+        return True
+    if isinstance(formula, Not):
+        return is_literal(formula)
+    if isinstance(formula, Implies) or isinstance(formula, And) or isinstance(formula, Or):
+        return False
 
 def substitution(formula: Formula, old_subformula: Formula, new_subformula: Formula):
     """Returns a new formula obtained by replacing all occurrences
