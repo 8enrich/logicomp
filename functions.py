@@ -52,7 +52,14 @@ def atoms(formula: Formula):
     This piece of code above prints: p, s
     (Note that there is no repetition of p)
     """
-    pass  # ======== REMOVE THIS LINE AND INSERT YOUR CODE HERE ========
+    if isinstance(formula, Atom):
+        return {formula}
+    if isinstance(formula, Not):
+        return atoms(formula.inner)
+    if isinstance(formula, Implies) or isinstance(formula, And) or isinstance(formula, Or):
+        atoms1 = atoms(formula.left)
+        atoms2 = atoms(formula.right)
+        return (atoms1).union(atoms2)
 
 
 def number_of_atoms(formula: Formula):
@@ -62,17 +69,30 @@ def number_of_atoms(formula: Formula):
 
     must return 3 (Observe that this function counts the repetitions of atoms)
     """
-    pass  # ======== REMOVE THIS LINE AND INSERT YOUR CODE HERE ========
+    if isinstance(formula, Atom):
+        return 1
+    if isinstance(formula, Not):
+        return number_of_atoms(formula.inner)
+    if isinstance(formula, Implies) or isinstance(formula, And) or isinstance(formula, Or):
+        num_of_atoms1 = number_of_atoms(formula.left)
+        num_of_atoms2 = number_of_atoms(formula.right)
+        return num_of_atoms1 + num_of_atoms2
 
 
 def number_of_connectives(formula: Formula):
     """Returns the number of connectives occurring in a formula."""
-    pass  # ======== REMOVE THIS LINE AND INSERT YOUR CODE HERE ========
-
+    if isinstance(formula, Atom):
+        return 0
+    if isinstance(formula, Not):
+        return 1
+    if isinstance(formula, Implies) or isinstance(formula, And) or isinstance(formula, Or):
+        num_of_conn1 = number_of_connectives(formula.left)
+        num_of_conn2 = number_of_connectives(formula.right)
+        return 1 + num_of_conn1 + num_of_conn2
 
 def is_literal(formula: Formula):
     """Returns True if formula is a literal. It returns False, otherwise"""
-    pass  # ======== REMOVE THIS LINE AND INSERT YOUR CODE HERE ========
+    return isinstance(formula, Atom) or isinstance(formula, Not)
 
 
 def substitution(formula: Formula, old_subformula: Formula, new_subformula: Formula):
