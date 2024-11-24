@@ -13,6 +13,7 @@ def length(formula: Formula):
         return length(formula.inner) + 1
     if isinstance(formula, Implies) or isinstance(formula, And) or isinstance(formula, Or):
         return length(formula.left) + length(formula.right) + 1
+    return 0
 
 
 def subformulas(formula: Formula):
@@ -36,6 +37,7 @@ def subformulas(formula: Formula):
         sub1 = subformulas(formula.left)
         sub2 = subformulas(formula.right)
         return {formula}.union(sub1).union(sub2)
+    return {}
 
 #  we have shown in class that, for all formula A, len(subformulas(A)) <= length(A).
 
@@ -60,6 +62,7 @@ def atoms(formula: Formula):
         atoms1 = atoms(formula.left)
         atoms2 = atoms(formula.right)
         return (atoms1).union(atoms2)
+    return {}
 
 
 def number_of_atoms(formula: Formula):
@@ -97,7 +100,7 @@ def is_literal(formula: Formula):
         return True
     if isinstance(formula, Not):
         return is_literal(formula.inner)
-    if isinstance(formula, Implies) or isinstance(formula, And) or isinstance(formula, Or):
+    if isinstance(formula, (Implies, And, Or)):
         return False
 
 def substitution(formula: Formula, old_subformula: Formula, new_subformula: Formula):

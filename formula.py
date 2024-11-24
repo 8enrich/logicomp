@@ -31,6 +31,9 @@ class Atom(Formula):
         return str(self.name)
     # end def
 
+    def __repr__(self):
+        return str(self)
+
     def __eq__(self, other: Formula):
         return isinstance(other, Atom) and other.name == self.name
     # end def
@@ -51,6 +54,9 @@ class Implies(Formula):
     def __str__(self):
         return "(" + self.left.__str__() + " " + u"\u2192" + " " + self.right.__str__() + ")"
     # end def
+
+    def __repr__(self):
+        return str(self)
 
     def __eq__(self, other: Formula):
         return isinstance(other, Implies) and other.left == self.left and other.right == self.right
@@ -73,6 +79,9 @@ class Not(Formula):
         return "(" + u"\u00ac" + str(self.inner) + ")"
     # end def
 
+    def __repr__(self):
+        return str(self)
+
     def __eq__(self, other: Formula):
         return isinstance(other, Not) and other.inner == self.inner
     # end def
@@ -93,6 +102,9 @@ class And(Formula):
     def __str__(self):
         return "(" + self.left.__str__() + " " + u"\u2227" + " " + self.right.__str__() + ")"
     # end def
+
+    def __repr__(self):
+        return str(self)
 
     def __eq__(self, other: Formula):
         return isinstance(other, And) and other.left == self.left and other.right == self.right
@@ -115,6 +127,9 @@ class Or(Formula):
     def __str__(self):
         return "(" + self.left.__str__() + " " + u"\u2228" + " " + self.right.__str__() + ")"
     # end def
+
+    def __repr__(self):
+        return str(self)
 
     def __eq__(self, other: Formula):
         return isinstance(other, Or) and other.left == self.left and other.right == self.right
