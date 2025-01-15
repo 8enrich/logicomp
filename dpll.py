@@ -70,11 +70,9 @@ def cnf_direct_transform(formula):
         formula = or_distribuctive(formula)
     return formula
 
-def cnf_tseitin_transform(formula):
-    formula = nnf_transform(formula)
-    formula = remove_double_negation(formula)
+def to_cnf(formula):
     new_vals = {}
-    clauses = set() 
+    clauses = set()
     num = 1
     def get_clauses(formula):
         nonlocal num
@@ -104,4 +102,9 @@ def cnf_tseitin_transform(formula):
     get_clauses(formula)
     new_formula = new_vals[formula]
     new_formula = reduce(lambda x, y: And(x, y), clauses)
-    return new_formula 
+    return new_formula
+
+def cnf_tseitin_transform(formula):
+    formula = nnf_transform(formula)
+    formula = remove_double_negation(formula)
+    return to_cnf(formula) 
