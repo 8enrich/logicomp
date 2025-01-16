@@ -1,5 +1,5 @@
 from formula import Atom, Not, Or, Implies, And
-from functions import is_cnf
+from functions import is_cnf, subformulas
 from functools import reduce
 
 def remove_implies(formula):
@@ -71,40 +71,40 @@ def cnf_direct_transform(formula):
     return formula
 
 def to_cnf(formula):
-    new_vals = {}
-    clauses = set()
-    num = 1
+    subforms = subformulas(formula)
+    subforms_not_atoms = list(filter(lambda x: not isinstance(x, Atom), subforms))
+    vals = [Atom(f'x_{i}') for i in range(len(subforms_not_atoms))]
+    new_vals = dict(zip(subforms_not_atoms, vals)) 
+    clauses = [] 
     def get_clauses(formula):
-        nonlocal num
         if isinstance(formula, Atom):
             return formula
-        new_val = new_vals.get(formula)
-        if not new_val:
-            new_vals[formula] = Atom(f'p_{num}')
-            num += 1
-        new_val = new_vals.get(formula)
+        new_val = new_vals[formula]
         if isinstance(formula, Not):
             b = get_clauses(formula.inner)
-            clauses.add(Or(Not(new_val), Not(b)))
-            clauses.add(Or(b, new_val))
-        if isinstance(formula, (And, Or)):
-            left = get_clauses(formula.left)
-            right = get_clauses(formula.right)
-            if isinstance(formula, And):
-                clauses.add(Or(Not(new_val), left))
-                clauses.add(Or(Not(new_val), right))
-                clauses.add(Or(new_val, Or(Not(left), Not(right))))
-            if isinstance(formula, Or):
-                clauses.add(Or(new_val, Not(left)))
-                clauses.add(Or(new_val, Not(right)))
-                clauses.add(Or(Not(new_val), Or(left, right)))
+            clauses.append(Or(Not(new_val), Not(b)))
+            clauses.append(Or(b, new_val))
+            return new_val
+        left = get_clauses(formula.left)
+        right = get_clauses(formula.right)
+        if isinstance(formula, And):
+            clauses.append(Or(Not(new_val), left))
+            clauses.append(Or(Not(new_val), right))
+            clauses.append(Or(new_val, Or(Not(left), Not(right))))
+        if isinstance(formula, Or):
+            clauses.append(Or(new_val, Not(left)))
+            clauses.append(Or(new_val, Not(right)))
+            clauses.append(Or(Not(new_val), Or(left, right)))
         return new_val
     get_clauses(formula)
-    new_formula = new_vals[formula]
     new_formula = reduce(lambda x, y: And(x, y), clauses)
+    new_formula = And(new_formula, new_vals[formula])
     return new_formula
 
 def cnf_tseitin_transform(formula):
     formula = nnf_transform(formula)
     formula = remove_double_negation(formula)
     return to_cnf(formula) 
+
+formula = Not(And(Atom('p'), Or(Atom('q'), Not(Atom('r'))))) 
+print(cnf_tseitin_transform(formula))
