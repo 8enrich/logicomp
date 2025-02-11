@@ -9,7 +9,7 @@ class Con(Term):
         super().__init__()
         self.name = name
 
-    def __str__(self):
+    def __repr__(self):
         return str(self.name)
 
     def __eq__(self, other):
@@ -25,7 +25,7 @@ class Var(Term):
         super().__init__()
         self.name = name
 
-    def __str__(self):
+    def __repr__(self):
         return str(self.name)
 
     def __eq__(self, other):
@@ -42,7 +42,7 @@ class Fun(Term):
         self.name = name
         self.args = args
 
-    def __str__(self):
+    def __repr__(self):
         printable_function = str(self.name) + "("
         for i in range(len(self.args)):
             if i == len(self.args) - 1:

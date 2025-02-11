@@ -10,7 +10,7 @@ class Atom(FormulaFOL):
         self.name = name
         self.args = args
 
-    def __str__(self):
+    def __repr__(self):
         printable_predicate = str(self.name) + "("
         for i in range(len(self.args)):
             if i == len(self.args) - 1:
@@ -39,8 +39,8 @@ class Implies(FormulaFOL):
         self.left = left
         self.right = right
 
-    def __str__(self):
-        return "(" + self.left.__str__() + " " + u"\u27F6" + " " + self.right.__str__() + ")"
+    def __repr__(self):
+        return "(" + self.left.__repr__() + " " + u"\u27F6" + " " + self.right.__repr__() + ")"
 
     def __eq__(self, other):
         return isinstance(other, Implies) and other.left == self.left and other.right == self.right
@@ -55,7 +55,7 @@ class Not(FormulaFOL):
         super().__init__()
         self.inner = inner
 
-    def __str__(self):
+    def __repr__(self):
         return "(" + u"\u00ac" + str(self.inner) + ")"
 
     def __eq__(self, other):
@@ -72,8 +72,8 @@ class And(FormulaFOL):
         self.left = left
         self.right = right
 
-    def __str__(self):
-        return "(" + self.left.__str__() + " " + u"\u2227" + " " + self.right.__str__() + ")"
+    def __repr__(self):
+        return "(" + self.left.__repr__() + " " + u"\u2227" + " " + self.right.__repr__() + ")"
 
     def __eq__(self, other):
         return isinstance(other, And) and other.left == self.left and other.right == self.right
@@ -89,8 +89,8 @@ class Or(FormulaFOL):
         self.left = left
         self.right = right
 
-    def __str__(self):
-        return "(" + self.left.__str__() + " " + u"\u2228" + " " + self.right.__str__() + ")"
+    def __repr__(self):
+        return "(" + self.left.__repr__() + " " + u"\u2228" + " " + self.right.__repr__() + ")"
 
     def __eq__(self, other):
         return isinstance(other, Or) and other.left == self.left and other.right == self.right
@@ -106,7 +106,7 @@ class ForAll(FormulaFOL):
         self.inner = inner
         self.var = var
 
-    def __str__(self):
+    def __repr__(self):
         return "(" + u"\u2200" + str(self.var) + str(self.inner) + ")"
 
     def __eq__(self, other):
@@ -123,7 +123,7 @@ class Exists(FormulaFOL):
         self.inner = inner
         self.var = var
 
-    def __str__(self):
+    def __repr__(self):
         return "(" + u"\u2203" + str(self.var) + str(self.inner) + ")"
 
     def __eq__(self, other):

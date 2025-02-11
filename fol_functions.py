@@ -1,27 +1,38 @@
-from fol_formula import *
-from term import *
+from fol_formula import Atom, Not, Implies, And, Or, ForAll, Exists
+from term import Con, Var, Fun
 
 
 def length_fol(formula):
     """Determines the length of a formula in first-order logic."""
     if isinstance(formula, Atom):
         return 1
-    if isinstance(formula, Not):
+    if isinstance(formula, (Not, ForAll, Exists)):
         return length_fol(formula.inner) + 1
-    if isinstance(formula, Implies) or isinstance(formula, And) or isinstance(formula, Or):
+    if isinstance(formula, (Implies, And, Or)):
         return length_fol(formula.left) + length_fol(formula.right) + 1
-    if isinstance(formula, ForAll) or isinstance(formula, Exists):
-        return 1 + length_fol(formula.inner)
+    return 0
 
 
 def subformulas_fol(formula):
     """Returns the set of all subformulas of a first-order formula"""
-    pass
+    if isinstance(formula, Atom):
+        return {formula}
+    if isinstance(formula, (Not, ForAll, Exists)):
+        return {formula}.union(subformulas_fol(formula.inner))
+    if isinstance(formula, (Implies, And, Or)):
+        return {formula}.union(subformulas_fol(formula.left)).union(subformulas_fol(formula.right))
+    return set()
 
 
 def constants_from_term(term):
     """Returns the set of all constant occurring in a term"""
-    pass
+    if isinstance(term, Con):
+        return {term}
+    if isinstance(term, Var):
+        return set()
+    if isinstance(term, Fun):
+        return set(map(constants_from_term, term.args))
+    return set()
 
 
 def variables_from_term(term):
@@ -31,10 +42,8 @@ def variables_from_term(term):
     if isinstance(term, Var):
         return {term}
     if isinstance(term, Fun):
-        variables = set()
-        for inner_term in term.args:
-            variables = variables.union(variables_from_term(inner_term))
-        return variables
+        return set(map(variables_from_term, term.args))
+    return set()
 
 
 def function_symbols_from_term(term):
@@ -47,12 +56,22 @@ def function_symbols_from_term(term):
     function_symbols_from_term(Fun('g', [Fun('f', [Var('x'), Con('a')])]))
     must return {'f', 'g'}
     """
-    pass
+    if isinstance(term, (Con, Var)):
+        return set()
+    if isinstance(term, Fun):
+        return set(map(function_symbols_from_term, term.args)).union(term.name)
+    return set()
 
 
 def all_constants(formula):
     """Returns the set of all constant occurring in a formula"""
-    pass
+    if isinstance(formula, Atom):
+        return set(map(constants_from_term, formula.args))
+    if isinstance(formula, (Not, ForAll, Exists)):
+        return all_constants(formula.inner)
+    if isinstance(formula, (Implies, And, Or)):
+        return all_constants(formula.left).union(all_constants(formula.right))
+    return set()
 
 
 def predicate_symbols(formula):
@@ -60,7 +79,13 @@ def predicate_symbols(formula):
     For example, predicate_symbols(Or(Atom('P', [Con('a')]), Atom('R', [Var('x')])))
     must return {'P', 'R'}
     """
-    pass
+    if isinstance(formula, Atom):
+        return {formula.name}
+    if isinstance(formula, (Not, ForAll, Exists)):
+        return predicate_symbols(formula.inner)
+    if isinstance(formula, (Implies, And, Or)):
+        return predicate_symbols(formula.left).union(predicate_symbols(formula.right)) 
+    return set()
 
 
 def function_symbols(formula):
@@ -71,18 +96,30 @@ def function_symbols(formula):
                                    )
     must return {'f', 'g'}
     """
-    pass
+    if isinstance(formula, Atom):
+        return set(map(function_symbols_from_term, formula.args))
+    if isinstance(formula, (Not, ForAll, Exists)):
+        return function_symbols(formula.inner)
+    if isinstance(formula, (Implies, And, Or)):
+        return function_symbols(formula.left).union(function_symbols(formula.right)) 
+    return set()
 
 
 def atoms_fol(formula):
     """Returns the set of all atomic suformulas of a first-order formula"""
-    pass
+    if isinstance(formula, Atom):
+        return {formula}
+    if isinstance(formula, (Not, ForAll, Exists)):
+        return atoms_fol(formula.inner)
+    if isinstance(formula, (Implies, And, Or)):
+        return atoms_fol(formula.left).union(atoms_fol(formula.right))
+    return set()
 
 
 def free_variables(formula):
     """Returns the set of all free variables of a formula"""
     pass
-
+    
 
 def bounded_variables(formula):
     """Returns the set of all bounded variables of a formula"""
